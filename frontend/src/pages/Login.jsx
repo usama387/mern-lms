@@ -10,8 +10,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+  useLoginUserMutation,
+  useRegisterUserMutation,
+} from "@/features/api/authApi";
+import { toast } from "sonner";
 
 const LoginPage = () => {
   // state variable to grab the values of input fields of sign up and submit the form.
@@ -43,11 +48,53 @@ const LoginPage = () => {
     }
   };
 
-  // function to submit the form.
-  const handleRegisteration = (type) => {
+  const [
+    registerUser,
+    {
+      data: registerData,
+      error: registerError,
+      isLoading: isRegistering,
+      isSuccess: successInRegistration,
+    },
+  ] = useRegisterUserMutation();
+
+  const [
+    loginUser,
+    {
+      data: loginData,
+      error: loginError,
+      isLoading: IsLoggingIn,
+      isSuccess: successInLogin,
+    },
+  ] = useLoginUserMutation();
+
+  // function to submit the form based on type received as a parameter.
+  const handleRegisteration = async (type) => {
     const inputData = type === "sign up" ? signUpInput : signInInput;
-    console.log(inputData);
+    const submitAction = type === "sign up" ? registerUser : loginUser;
+    await submitAction(inputData);
   };
+
+  // useEffect to execute when form is submitted
+  useEffect(() => {
+    if (successInRegistration && registerData) {
+      toast.success(
+        registerData.message ||
+          "Account created successfully. Please login to continue."
+      );
+    }
+    if (registerError) {
+      toast.error(registerError.data.message || "Something went wrong.");
+    }
+
+    if (successInLogin && loginData) {
+      toast.success(loginData.message || "Logged in successfully.");
+    }
+
+    if (loginError) {
+      toast.error(loginError.data.message || "Something went wrong.");
+    }
+  }, [successInRegistration, successInLogin, registerData, loginData]);
 
   return (
     <div className="flex justify-center items-center h-screen">
@@ -109,8 +156,18 @@ const LoginPage = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={() => handleRegisteration("sign up")}>
-                Sign up
+              <Button
+                disabled={isRegistering}
+                onClick={() => handleRegisteration("sign up")}
+              >
+                {isRegistering ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
+                    Wait
+                  </>
+                ) : (
+                  "Sign up"
+                )}
               </Button>
             </CardFooter>
           </Card>
@@ -156,8 +213,18 @@ const LoginPage = () => {
               </div>
             </CardContent>
             <CardFooter>
-              <Button onClick={() => handleRegisteration("sign in")}>
-                Sign in
+              <Button
+                disabled={IsLoggingIn}
+                onClick={() => handleRegisteration("sign in")}
+              >
+                {IsLoggingIn ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
+                    Wait
+                  </>
+                ) : (
+                  "Sign in"
+                )}
               </Button>
             </CardFooter>
           </Card>
