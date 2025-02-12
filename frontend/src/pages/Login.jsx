@@ -72,6 +72,13 @@ const LoginPage = () => {
   const handleRegisteration = async (type) => {
     const inputData = type === "sign up" ? signUpInput : signInInput;
     const submitAction = type === "sign up" ? registerUser : loginUser;
+
+    // Check if any field is empty
+    if (Object.values(inputData).some((field) => field.trim() === "")) {
+      toast.error("All fields are required.🙁");
+      return;
+    }
+    // now send the data to the server
     await submitAction(inputData);
   };
 
@@ -82,6 +89,7 @@ const LoginPage = () => {
         registerData.message ||
           "Account created successfully. Please login to continue."
       );
+      setSignUpInput({ name: "", email: "", password: "" });
     }
     if (registerError) {
       toast.error(registerError.data.message || "Something went wrong.");
@@ -89,6 +97,7 @@ const LoginPage = () => {
 
     if (successInLogin && loginData) {
       toast.success(loginData.message || "Logged in successfully.");
+      setSignInInput({ email: "", password: "" });
     }
 
     if (loginError) {
