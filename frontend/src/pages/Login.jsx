@@ -17,6 +17,7 @@ import {
   useRegisterUserMutation,
 } from "@/features/api/authApi";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   // state variable to grab the values of input fields of sign up and submit the form.
@@ -37,6 +38,9 @@ const LoginPage = () => {
 
   // to toggle password state
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  // hook for navigation
+  const navigate = useNavigate();
 
   // function to change the input fields values.
   const changeInputHandler = (e, type) => {
@@ -98,6 +102,7 @@ const LoginPage = () => {
     if (successInLogin && loginData) {
       toast.success(loginData.message || "Logged in successfully.");
       setSignInInput({ email: "", password: "" });
+      navigate("/");
     }
 
     if (loginError) {
