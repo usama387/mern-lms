@@ -1,11 +1,11 @@
 import React from "react";
 import LoginPage from "./pages/Login";
-import { Button } from "./components/ui/button";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <main>
-      <Button>Hi there</Button>
+      <Navbar />
       <LoginPage />
     </main>
   );
