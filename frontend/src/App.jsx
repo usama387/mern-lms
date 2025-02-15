@@ -1,9 +1,9 @@
 import React from "react";
 import LoginPage from "./pages/Login";
-import Navbar from "./components/Navbar";
 import { HeroSection } from "./pages/student/HeroSection";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import MainLayout from "./layout/MainLayout";
+import Courses from "./pages/student/Courses";
 
 const App = () => {
   const appRouter = createBrowserRouter([
@@ -16,7 +16,7 @@ const App = () => {
           element: (
             <>
               <HeroSection />
-              {/* Courses */}
+              <Courses />
             </>
           ),
         },
@@ -27,7 +27,7 @@ const App = () => {
 
   return (
     <main>
-    <RouterProvider router={appRouter}/>
+      <RouterProvider router={appRouter} />
     </main>
   );
 };
