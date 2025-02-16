@@ -59,9 +59,11 @@ const Navbar = () => {
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem>
-                      <Link to="my-courses">My Courses</Link>
+                      <Link to="/my-courses">My Courses</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>Edit Profile</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to="/my-profile">Edit Profile</Link>
+                    </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>GitHub</DropdownMenuItem>
