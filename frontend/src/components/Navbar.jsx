@@ -22,6 +22,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { Separator } from "./ui/separator";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const user = true;
@@ -57,7 +58,9 @@ const Navbar = () => {
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
-                    <DropdownMenuItem>My Courses</DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <Link to="my-courses">My Courses</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem>Edit Profile</DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
