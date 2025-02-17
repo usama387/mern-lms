@@ -82,3 +82,43 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// get user profile controller
+export const getUserProfileDetails = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No user id was provided" });
+    }
+
+    // find the user by their id from the request body
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// user logout controller
+export const logoutUser = async (_, res) => {
+  try {
+    return res
+      .status(200)
+      .cookie("token", "", { maxAge: 0 })
+      .json({ success: true, message: "User logged out" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
