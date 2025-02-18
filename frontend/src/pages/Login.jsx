@@ -112,7 +112,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <Tabs defaultValue="account" className="w-[400px]">
+      <Tabs defaultValue="sign in" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="sign up">Sign up</TabsTrigger>
           <TabsTrigger value="sign in">Sign in</TabsTrigger>
