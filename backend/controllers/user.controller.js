@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/generateToken.js";
 import validator from "validator";
+import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
 // Register a new user to the database
 export const registerUser = async (req, res) => {
@@ -110,13 +111,67 @@ export const getUserProfileDetails = async (req, res) => {
   }
 };
 
+// to update user profile controller
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    if (!userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "No user id was provided" });
+    }
+
+    const { name } = req.body;
+
+    const profilePicture = req.file;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // extract public id of existing previous image and then delete it using the delete function which accepts publicId as parameter
+    if (user.profilePicUrl) {
+      const publicId = user.profilePicUrl.split("/").pop().split(".")[0];
+      deleteMediaFromCloudinary(publicId);
+    }
+
+    // now upload new profile picture with upload function takes profilePicture from request.files
+    const cloudResponseWithUploadedPictureUrl = await uploadMedia(
+      profilePicture.path
+    );
+
+    const profilePicUrl = cloudResponseWithUploadedPictureUrl.secure_url;
+
+    // data object to be passed in update query method
+    const updatedData = { name, profilePicUrl };
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    }).select("-password");
+
+    res.status(200).json({
+      success: true,
+      user: updatedUser,
+      message: "Profile Updated Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 // user logout controller
 export const logoutUser = async (_, res) => {
   try {
     return res
       .status(200)
       .cookie("token", "", { maxAge: 0 })
-      .json({ success: true, message: "User logged out" });
+      .json({ success: true, message: "You just logged out" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
