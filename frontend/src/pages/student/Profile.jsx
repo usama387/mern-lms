@@ -14,18 +14,68 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Course from "./Course";
-import { useGetUserProfileDetailsQuery } from "@/features/api/authApi";
+import {
+  useGetUserProfileDetailsQuery,
+  useUpdateUserProfileMutation,
+} from "@/features/api/authApi";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const Profile = () => {
-  // getting data and isLoading from this hook coming from authApi
-  const { data, isLoading } = useGetUserProfileDetailsQuery();
-
-  console.log(data);
+  // getting data and isLoading from this hook coming from authApi to render user profile details
+  const { data, isLoading, refetch } = useGetUserProfileDetailsQuery();
 
   // accessing my user from data
   const user = data?.user || {};
 
-  const updateUserIsLoading = false;
+  // now for updating profile
+  const [
+    updateUserProfile,
+    {
+      data: updatedUserData,
+      isLoading: updatedUserIsLoadingState,
+      error,
+      isSuccess,
+      isError,
+    },
+  ] = useUpdateUserProfileMutation();
+
+  // state variables for updateUserProfile api
+  const [name, setName] = useState("");
+
+  const [profilePicture, setProfilePicture] = useState("");
+
+  // to save image file in state variable
+  const onChangeHandler = (e) => {
+    const file = e.target.files?.[0];
+    if (file) setProfilePicture(file);
+  };
+
+  // function to create formData object and send it to authApi
+  const updateUserProfileHandler = async () => {
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("profilePicture", profilePicture);
+
+    // passing from data as parameter to api function to update user
+    await updateUserProfile(formData);
+  };
+
+  // state variable to close dialog
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      setOpen(false);
+      toast.success(data.message || "Profile updated Successfully.");
+    }
+
+    if (isError) {
+      toast.error(error.message || "Failed to update profile");
+    }
+  }, [error, updatedUserData, isError, isSuccess]);
 
   //   when loading is true render this skeleton
   if (isLoading) {
@@ -126,7 +176,7 @@ const Profile = () => {
               </span>
             </h1>
           </div>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button className="transition hover:scale-105 duration-300">
                 Edit Profile
@@ -147,16 +197,26 @@ const Profile = () => {
                     type="text"
                     placeholder="Name"
                     className="col-span-3"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label>Profile Photo</Label>
-                  <Input type="file" accept="image/*" className="col-span-3" />
+                  <Input
+                    onChange={onChangeHandler}
+                    type="file"
+                    accept="image/*"
+                    className="col-span-3 cursor-pointer"
+                  />
                 </div>
               </div>
               <DialogFooter>
-                <Button disabled={updateUserIsLoading}>
-                  {updateUserIsLoading ? (
+                <Button
+                  disabled={updatedUserIsLoadingState}
+                  onClick={updateUserProfileHandler}
+                >
+                  {updatedUserIsLoadingState ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please
                       wait
@@ -173,12 +233,12 @@ const Profile = () => {
       <div className="">
         <h1 className="font-medium text-lg">Courses you're enrolled in</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 my-5">
-          {user?.enrolledCourses.length === 0 ? (
+          {user?.enrolledCourses?.length === 0 ? (
             <p className="text-red-500 text-base font-semibold">
               You haven't enrolled yet
             </p>
           ) : (
-            user?.enrolledCourses.map((course, index) => (
+            user?.enrolledCourses?.map((course, index) => (
               <Course key={course._id} course={course} />
             ))
           )}
