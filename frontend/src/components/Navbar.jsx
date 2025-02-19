@@ -25,12 +25,17 @@ import { Separator } from "./ui/separator";
 import { Link, useNavigate } from "react-router-dom";
 import { useLogoutUserMutation } from "@/features/api/authApi";
 import { toast } from "sonner";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const user = true;
+  // fetching and destructuring user from redux store
+  const { user } = useSelector((store) => store.auth);
+
+  console.log(user);
 
   const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
 
+  // function from authApi that triggers logout api
   const logoutHandler = async () => {
     await logoutUser();
   };
@@ -50,9 +55,11 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full">
         <div className="flex items-center gap-2">
           <University size={32} className="text-primary" />
-          <h1 className="hidden md:block text-2xl font-bold tracking-wide bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
-            UPSKILL
-          </h1>
+          <Link to={"/"}>
+            <h1 className="hidden md:block text-2xl font-bold tracking-wide bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+              UPSKILL
+            </h1>
+          </Link>
         </div>
         {/* User and Dark Mode Icons */}
         <div className="flex items-center gap-8">
@@ -62,11 +69,13 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Avatar>
                     <AvatarImage
-                      src="https://github.com/shadcn.png"
+                      src={
+                        user?.profilePicUrl || "https://github.com/shadcn.png"
+                      }
                       alt="@shadcn"
                       className="cursor-pointer"
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>{user?.name}</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56">
@@ -89,17 +98,30 @@ const Navbar = () => {
                   <DropdownMenuItem onClick={logoutHandler}>
                     Log out
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                  {user.role === "instructor" && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>Dashboard</DropdownMenuItem>
+                    </>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="outline" className="">
+              <Button
+                variant="outline"
+                onClick={() => navigate("/login")}
+                className="transition hover:scale-105 duration-300"
+              >
                 Sign in
               </Button>
-              <Button className="">Sign up</Button>
+              <Button
+                onClick={() => navigate("/login")}
+                className="transition hover:scale-105 duration-300"
+              >
+                Sign up
+              </Button>
             </div>
           )}
           <DarkMode />
