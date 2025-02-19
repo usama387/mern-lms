@@ -88,7 +88,7 @@ const Navbar = () => {
                       <Link to="/my-courses">My Courses</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>
-                      <Link to="/my-profile">Edit Profile</Link>
+                      <Link to="/my-profile">Profile</Link>
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
