@@ -178,6 +178,7 @@ const LoginPage = () => {
             </CardContent>
             <CardFooter>
               <Button
+                className="hover:bg-blue-800 transition duration-300 hover:scale-105"
                 disabled={isRegistering}
                 onClick={() => handleRegisteration("sign up")}
               >
@@ -235,6 +236,7 @@ const LoginPage = () => {
             </CardContent>
             <CardFooter>
               <Button
+                className="hover:bg-blue-800 transition duration-300 hover:scale-105"
                 disabled={IsLoggingIn}
                 onClick={() => handleRegisteration("sign in")}
               >
