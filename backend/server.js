@@ -4,6 +4,7 @@ import connectDb from "./database/connectToDb.js";
 import cors from "cors";
 import userRouter from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
+import courseRouter from "./routes/course.route.js";
 
 // to access environment variables in .env file
 dotenv.config();
@@ -28,6 +29,9 @@ app.use(
 
 // user auth api route
 app.use("/api/user", userRouter);
+
+// course api route
+app.use("/api/course", courseRouter);
 
 // test api end point
 app.get("/", (req, res) => {
