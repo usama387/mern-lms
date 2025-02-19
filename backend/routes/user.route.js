@@ -14,7 +14,7 @@ const userRouter = express.Router();
 // Api routes for authentication, registration, user profile, etc.
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
-userRouter.post("/logout", logoutUser)
+userRouter.get("/logout", logoutUser)
 userRouter.get("/getProfile", isUserAuthenticated, getUserProfileDetails);
 userRouter.put("/profile/updateProfile", isUserAuthenticated, upload.single("profilePicture"), updateUserProfile);
 
