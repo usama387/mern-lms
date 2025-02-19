@@ -108,7 +108,14 @@ const LoginPage = () => {
     if (loginError) {
       toast.error(loginError.data.message || "Something went wrong.");
     }
-  }, [successInRegistration, successInLogin, registerData, loginData]);
+  }, [
+    successInRegistration,
+    successInLogin,
+    registerData,
+    loginData,
+    loginError,
+    registerError,
+  ]);
 
   return (
     <div className="flex justify-center items-center h-screen">
