@@ -65,6 +65,11 @@ const Profile = () => {
   // state variable to close dialog
   const [open, setOpen] = useState(false);
 
+  // useEffect to fetch user profile data when component mounts
+  useEffect(() => {
+    refetch();
+  }, []);
+
   useEffect(() => {
     if (isSuccess) {
       refetch();
@@ -208,11 +213,13 @@ const Profile = () => {
                     type="file"
                     accept="image/*"
                     className="col-span-3 cursor-pointer"
+                    required
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button
+                  className="transition hover:scale-105 duration-300 hover:bg-blue-800 "
                   disabled={updatedUserIsLoadingState}
                   onClick={updateUserProfileHandler}
                 >
@@ -222,7 +229,7 @@ const Profile = () => {
                       wait
                     </>
                   ) : (
-                    "Save Changes"
+                    "Update Now"
                   )}
                 </Button>
               </DialogFooter>
