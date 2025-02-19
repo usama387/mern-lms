@@ -8,3 +8,12 @@ export const appStore = configureStore({
   middleware: (defaultMiddleware) =>
     defaultMiddleware().concat(authApi.middleware),
 });
+
+// to hit api end points whenever page is refreshed
+const initializeApp = async () => {
+  await appStore.dispatch(
+    authApi.endpoints.getUserProfileDetails.initiate({}, { forceRefetch: true })
+  );
+};
+
+initializeApp();
