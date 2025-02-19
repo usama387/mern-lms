@@ -166,14 +166,10 @@ export const updateUserProfile = async (req, res) => {
 };
 
 // user logout controller
-export const logoutUser = async (_, res) => {
-  try {
-    return res
-      .status(200)
-      .cookie("token", "", { maxAge: 0 })
-      .json({ success: true, message: "You just logged out" });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
-  }
+export const logoutUser = (_, res) => {
+  return res
+    .status(200)
+    .cookie("token", "", { maxAge: 0 })
+    .json({ success: true, message: "You just logged out" });
 };
+
