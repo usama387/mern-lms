@@ -6,7 +6,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -14,9 +13,12 @@ import {
 import { useGetInstructorCoursesQuery } from "@/features/api/courseApi";
 import { Edit } from "lucide-react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const CourseTable = () => {
+  
+  // useNavigate hook to navigate to different routes
+  const navigate = useNavigate();
 
   // accessing the data which has courses and loading state from the query in courseApi
   const { data, isLoading } = useGetInstructorCoursesQuery();
@@ -88,7 +90,13 @@ const CourseTable = () => {
               </TableCell>
               <TableCell>{course?.title}</TableCell>
               <TableCell className="text-right">
-                <Button size="sm" variant="outline">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    navigate(`${course._id}`);
+                  }}
+                >
                   <Edit />
                 </Button>
               </TableCell>
