@@ -28,3 +28,27 @@ export const createCourse = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// controller to get all courses created by the instructor
+export const getAllInstructorCreatedCourses = async (req, res) => {
+  try {
+    const courses = await Course.find({ creator: req.id });
+
+    if (!courses) {
+      return res.status(404).json({
+        success: false,
+        message: "No courses found",
+        course: [],
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Instructor courses fetched successfully",
+      courses,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
