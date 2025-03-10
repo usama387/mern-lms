@@ -20,4 +20,4 @@ const lectureSchema = new mongoose.Schema(
 );
 
 export const Lecture =
-  mongoose.models.lecture || mongoose.model("lecture", lectureSchema);
+  mongoose.models.Lecture || mongoose.model("Lecture", lectureSchema);
