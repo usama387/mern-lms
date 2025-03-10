@@ -196,3 +196,30 @@ export const createCourseLecture = async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+// controller to get a course lecture
+export const getCourseLectures = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    if (!courseId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Course ID is required" });
+    }
+
+    // find the course
+    const course = await Course.findById(courseId).populate("lectures");
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course not found" });
+    }
+
+    res.status(200).json({
+      lectures: course.lectures,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

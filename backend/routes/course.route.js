@@ -4,6 +4,7 @@ import {
   createCourseLecture,
   getAllInstructorCreatedCourses,
   getCourseById,
+  getCourseLectures,
   updateCourse,
 } from "../controllers/course.controller.js";
 import isUserAuthenticated from "../middlewares/isUserAuthenticated.js";
@@ -28,6 +29,11 @@ courseRouter.post(
   "/:courseId/createLecture",
   isUserAuthenticated,
   createCourseLecture
+);
+courseRouter.get(
+  "/:courseId/getLectures",
+  isUserAuthenticated,
+  getCourseLectures
 );
 
 export default courseRouter;
