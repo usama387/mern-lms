@@ -78,7 +78,7 @@ const CourseTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.courses.map((course) => (
+          {data?.courses?.map((course) => (
             <TableRow key={course._id}>
               <TableCell className="font-medium">
                 {course?.price || "NA"}
