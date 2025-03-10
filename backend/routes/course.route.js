@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createCourse,
+  createCourseLecture,
   getAllInstructorCreatedCourses,
   getCourseById,
   updateCourse,
@@ -22,6 +23,11 @@ courseRouter.put(
   isUserAuthenticated,
   upload.single("thumbnail"),
   updateCourse
+);
+courseRouter.post(
+  "/:courseId/createLecture",
+  isUserAuthenticated,
+  createCourseLecture
 );
 
 export default courseRouter;

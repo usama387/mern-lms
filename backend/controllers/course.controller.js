@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { Course } from "../models/course.model.js";
 import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
+import { Lecture } from "../models/lecture.model.js";
 
 // controller to create a course
 export const createCourse = async (req, res) => {
@@ -69,9 +70,9 @@ export const updateCourse = async (req, res) => {
 
     // Add validation for courseId
     if (!mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Invalid course ID" 
+      return res.status(400).json({
+        success: false,
+        message: "Invalid course ID",
       });
     }
 
@@ -154,6 +155,41 @@ export const getCourseById = async (req, res) => {
       course,
       success: true,
       message: "Course fetched successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// controller to create a new course lecture
+
+export const createCourseLecture = async (req, res) => {
+  try {
+    const { lectureTitle } = req.body;
+    const { courseId } = req.params;
+
+    if (!lectureTitle || !courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Lecture title and course ID are required fields",
+      });
+    }
+
+    const lecture = await Lecture.create({
+      lectureTitle,
+    });
+
+    const course = await Course.findById(courseId);
+
+    if (course) {
+      course.lectures.push(lecture._id);
+      await course.save();
+    }
+    res.status(201).json({
+      success: true,
+      message: "Lecture created successfully",
+      lecture,
     });
   } catch (error) {
     console.log(error);
