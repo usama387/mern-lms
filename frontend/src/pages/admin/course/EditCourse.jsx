@@ -11,7 +11,7 @@ const EditCourse = () => {
           Course Detailed Information
         </h1>
         <Link to="lecture">
-          <Button variant="outline" className="font-semibold transition hover:scale-105 duration-300 hover:text-blue-500 ring-2 ring-blue-500">Open Lectures</Button>
+          <Button variant="outline" className="font-semibold transition hover:scale-105 duration-300 hover:text-blue-500 ring-2 ring-blue-500">Course Lectures</Button>
         </Link>
       </div>
       <CourseTab />
