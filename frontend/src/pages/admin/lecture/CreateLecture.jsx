@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCreateCourseLectureMutation } from "@/features/api/courseApi";
+import {
+  useCreateCourseLectureMutation,
+  useGetCourseLecturesQuery,
+} from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
+import Lecture from "./Lecture";
 
 const CreateLecture = () => {
   // getting course id to navigate
@@ -30,11 +34,20 @@ const CreateLecture = () => {
       toast.error(error.data.message || "Failed to create lecture");
     }
     if (isSuccess) {
+      // refetch the lectures
+      refetch();
       setLectureTitle("");
       toast.success(data.message || "Lecture created successfully");
-      // navigate(`/admin/course/${courseId}/lecture/${data.data.lecture._id}`);
     }
   }, [error, isSuccess]);
+
+  // mutation function from courseApi to get course lectures by sending courseId in parameter
+  const {
+    data: lecturesData,
+    isLoading: lecturesLoading,
+    isError: lecturesError,
+    refetch,
+  } = useGetCourseLecturesQuery(courseId);
 
   return (
     <div className="flex-1 mx-10 mt-10">
@@ -81,6 +94,24 @@ const CreateLecture = () => {
               "Create Now"
             )}
           </Button>
+        </div>
+        <div className="mt-10">
+          {lecturesLoading ? (
+            <p>Loading Lectures... </p>
+          ) : lecturesError ? (
+            <p>Failed to fetch lectures</p>
+          ) : lecturesData.lectures.length === 0 ? (
+            <p>No lectures found</p>
+          ) : (
+            lecturesData.lectures.map((lecture, index) => (
+              <Lecture
+                key={lecture._id}
+                lecture={lecture}
+                index={index}
+                courseId={courseId}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>
