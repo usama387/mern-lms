@@ -2,9 +2,12 @@ import express from "express";
 import {
   createCourse,
   createCourseLecture,
+  deleteLecture,
+  editLecture,
   getAllInstructorCreatedCourses,
   getCourseById,
   getCourseLectures,
+  getLectureById,
   updateCourse,
 } from "../controllers/course.controller.js";
 import isUserAuthenticated from "../middlewares/isUserAuthenticated.js";
@@ -35,5 +38,12 @@ courseRouter.get(
   isUserAuthenticated,
   getCourseLectures
 );
+courseRouter.post(
+  "/:courseId/lecture/:lectureId",
+  isUserAuthenticated,
+  editLecture
+);
+courseRouter.delete("/lecture/:lectureId", isUserAuthenticated, deleteLecture);
+courseRouter.get("/lecture/:lectureId", isUserAuthenticated, getLectureById);
 
 export default courseRouter;
