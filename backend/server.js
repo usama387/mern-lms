@@ -5,6 +5,7 @@ import cors from "cors";
 import userRouter from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
 import courseRouter from "./routes/course.route.js";
+import mediaRoute from "./routes/media.route.js";
 
 // to access environment variables in .env file
 dotenv.config();
@@ -32,6 +33,9 @@ app.use("/api/user", userRouter);
 
 // course api route
 app.use("/api/course", courseRouter);
+
+// media api route
+app.use("/api/media", mediaRoute);
 
 // test api end point
 app.get("/", (req, res) => {
