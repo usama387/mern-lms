@@ -31,8 +31,6 @@ const Navbar = () => {
   // fetching and destructuring user from redux store
   const { user } = useSelector((store) => store.auth);
 
-  console.log(user);
-
   const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
 
   // function from authApi that triggers logout api
