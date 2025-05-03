@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 import { Course } from "../models/course.model.js";
-import { deleteMediaFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
+import {
+  deleteMediaFromCloudinary,
+  deleteVideoFromCloudinary,
+  uploadMedia,
+} from "../utils/cloudinary.js";
 import { Lecture } from "../models/lecture.model.js";
 
 // controller to create a course
@@ -217,6 +221,126 @@ export const getCourseLectures = async (req, res) => {
 
     res.status(200).json({
       lectures: course.lectures,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// controller to update a lecture
+export const editLecture = async (req, res) => {
+  try {
+    const { lectureTitle, videoInfo, isPreviewFree } = req.body;
+
+    const { courseId, lectureId } = req.params;
+
+    // find lecture
+    const lecture = await Lecture.findById(lectureId);
+    if (!lecture) {
+      return res.status(404).json({
+        success: false,
+        message: "Lecture not found",
+      });
+    }
+
+    // update lecture
+    if (lectureTitle) {
+      lecture.lectureTitle = lectureTitle;
+    }
+
+    if (videoInfo?.videoUrl) {
+      lecture.videoUrl = videoInfo.videoUrl;
+    }
+
+    if (videoInfo?.publicId) {
+      lecture.publicId = videoInfo.publicId;
+    }
+
+    lecture.isPreviewFree = isPreviewFree;
+
+    await lecture.save();
+
+    // now update this lecture in course table by ensuring the course has still lecture id if it was not already added
+    const course = await Course.findById(courseId);
+
+    if (course && course.lectures.includes(lecture._id)) {
+      course.lectures.push(lecture._id);
+      await course.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Lecture updated successfully",
+      lecture,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// controller to delete a lecture
+export const deleteLecture = async (req, res) => {
+  try {
+    const { lectureId } = req.params;
+    if (!lectureId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Lecture ID is required" });
+    }
+    // find lecture
+    const lecture = await Lecture.findByIdAndDelete(lectureId);
+    if (!lecture) {
+      return res.status(404).json({
+        success: false,
+        message: "Lecture not found",
+      });
+    }
+
+    // delete lecture from cloudinary
+    if (lecture.publicId) {
+      await deleteVideoFromCloudinary(lecture.publicId);
+    }
+
+    // now remove this lecture from course table
+    await Course.updateOne(
+      { lectures: lectureId }, //find course that contains this lecture id
+      { $pull: { lectures: lectureId } } // remove this lecture id from course lectures array
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Lecture removed successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// controller to get a lecture by its id
+export const getLectureById = async (req, res) => {
+  try {
+    const { lectureId } = req.params;
+    if (!lectureId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Lecture ID is required" });
+    }
+
+    const lecture = await Lecture.findById(lectureId);
+    if (!lecture) {
+      return res.status(404).json({
+        success: false,
+        message: "Lecture not found",
+      });
+    }
+    
+    res.status(200).json({
+      success: true,
+      message: "Lecture fetched successfully",
+      lecture,
     });
   } catch (error) {
     console.log(error);
