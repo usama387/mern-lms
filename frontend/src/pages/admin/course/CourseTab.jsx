@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import {
   useGetCourseByIdQuery,
+  usePublishCourseMutation,
   useUpdateCourseMutation,
 } from "@/features/api/courseApi";
 import { Loader2 } from "lucide-react";
@@ -28,7 +29,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 const CourseTab = () => {
-  const isPublished = true;
   const navigate = useNavigate();
 
   // to grab courseId with useParams hook & send it to api to update a course
@@ -47,8 +47,11 @@ const CourseTab = () => {
   });
 
   // to get single course data using its id
-  const { data: courseDataById, isLoading: courseIsLoading } =
-    useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
+  const {
+    data: courseDataById,
+    isLoading: courseIsLoading,
+    refetch,
+  } = useGetCourseByIdQuery(courseId, { refetchOnMountOrArgChange: true });
 
   // to render default course details in fields to update them
   useEffect(() => {
@@ -102,8 +105,6 @@ const CourseTab = () => {
 
   // function to call api in rtk query to update course information
   const updateCourseHandler = async () => {
-    console.log(input);
-
     const formData = new FormData();
     formData.append("title", input.title);
     formData.append("subtitle", input.subtitle);
@@ -123,6 +124,26 @@ const CourseTab = () => {
       toast.error(error.data.message || "Failed to update course");
     }
   }, [error]);
+
+  // accessing mutation function from courseApi file to publish/unpublish course
+  const [publishCourse, { isLoading: togglingStatus }] =
+    usePublishCourseMutation();
+
+  // function to call api in rtk query to publish/unpublish course takes courseId from params and action as parameter from where it is invoked
+  const publishStatusHandler = async (action) => {
+    try {
+      const response = await publishCourse({
+        courseId,
+        query: action,
+      });
+      if (response?.data) {
+        toast.success(response?.data?.message);
+        refetch(); // refetch the course data after updating publish status
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Failed to update publish status");
+    }
+  };
 
   if (courseIsLoading) {
     return (
@@ -147,8 +168,23 @@ const CourseTab = () => {
           <Button
             variant="outline"
             className="transition hover:scale-105 duration-300 hover:text-blue-500 ring-2 ring-blue-500"
+            onClick={() =>
+              publishStatusHandler(
+                courseDataById?.course?.isPublished ? "false" : "true"
+              )
+            }
+            disabled={togglingStatus}
           >
-            {isPublished === true ? "Unpublish" : "Publish"}
+            {togglingStatus ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+              </>
+            ) : courseDataById?.course?.isPublished ? (
+              "Unpublish"
+            ) : (
+              "Publish"
+            )}
           </Button>
           <Button className="transition hover:scale-105 duration-300">
             Remove Course
