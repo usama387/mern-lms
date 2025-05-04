@@ -336,7 +336,7 @@ export const getLectureById = async (req, res) => {
         message: "Lecture not found",
       });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Lecture fetched successfully",
@@ -345,5 +345,51 @@ export const getLectureById = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+// controller to publish or unpublish a course
+export const togglePublishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(400).json({
+        success: false,
+        message: "Course ID is required to perform this operation",
+      });
+    }
+
+    // its either true or false
+    const { publish } = req.query;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({
+        success: false,
+        message: "Course not found",
+      });
+    }
+
+    //publish status based on query parameter
+    course.isPublished = publish === "true";
+
+    // save the course now
+    await course.save();
+
+    const publishedStatusMessage = course.isPublished
+      ? "published"
+      : "unpublished";
+
+    res.status(200).json({
+      success: true,
+      message: `Course ${publishedStatusMessage} successfully`,
+      course,
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update publish status" });
   }
 };

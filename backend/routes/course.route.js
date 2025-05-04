@@ -8,6 +8,7 @@ import {
   getCourseById,
   getCourseLectures,
   getLectureById,
+  togglePublishCourse,
   updateCourse,
 } from "../controllers/course.controller.js";
 import isUserAuthenticated from "../middlewares/isUserAuthenticated.js";
@@ -45,5 +46,6 @@ courseRouter.post(
 );
 courseRouter.delete("/lecture/:lectureId", isUserAuthenticated, deleteLecture);
 courseRouter.get("/lecture/:lectureId", isUserAuthenticated, getLectureById);
+courseRouter.patch("/:courseId", isUserAuthenticated, togglePublishCourse);
 
 export default courseRouter;
