@@ -131,7 +131,7 @@ const LectureTab = () => {
   }, [deleteLectureSuccess]);
 
   // api function to return lecture data when passed lecture id
-  const { data: lectureData } = useGetLectureByIdQuery(lectureId);
+  const { data: lectureData, refetch } = useGetLectureByIdQuery(lectureId);
 
   const lecture = lectureData?.lecture;
 
@@ -141,6 +141,8 @@ const LectureTab = () => {
       setIsPreviewFree(lecture.isPreviewFree);
       setVideoInfo(lecture.videoInfo);
     }
+    // refetching lecture data when component mounts 
+    refetch();
   }, [lecture]);
 
   return (
