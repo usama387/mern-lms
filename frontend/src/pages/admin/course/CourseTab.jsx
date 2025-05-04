@@ -164,6 +164,7 @@ const CourseTab = () => {
             Make changes and then press save when you're done.
           </CardDescription>
         </div>
+        {/* Publish or Unpublish Logic */}
         <div className="space-x-3">
           <Button
             variant="outline"
@@ -173,7 +174,9 @@ const CourseTab = () => {
                 courseDataById?.course?.isPublished ? "false" : "true"
               )
             }
-            disabled={togglingStatus}
+            disabled={
+              togglingStatus || courseDataById?.course?.lectures?.length === 0
+            }
           >
             {togglingStatus ? (
               <>
@@ -186,6 +189,7 @@ const CourseTab = () => {
               "Publish"
             )}
           </Button>
+          {/* Remove Course Logic */}
           <Button className="transition hover:scale-105 duration-300">
             Remove Course
           </Button>
