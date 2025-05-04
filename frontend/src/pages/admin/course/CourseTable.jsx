@@ -12,16 +12,20 @@ import {
 } from "@/components/ui/table";
 import { useGetInstructorCoursesQuery } from "@/features/api/courseApi";
 import { Edit } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const CourseTable = () => {
-  
   // useNavigate hook to navigate to different routes
   const navigate = useNavigate();
 
   // accessing the data which has courses and loading state from the query in courseApi
-  const { data, isLoading } = useGetInstructorCoursesQuery();
+  const { data, isLoading, refetch } = useGetInstructorCoursesQuery();
+
+  // refetch the course data when the component mounts
+  useEffect(() => {
+    refetch();
+  }, [data]);
 
   if (isLoading) {
     return (
@@ -64,7 +68,7 @@ const CourseTable = () => {
     <div className="mt-20">
       <Link to="/admin/course/create">
         <Button className="transition hover:scale-105 duration-300">
-          New Course
+          Add New Course
         </Button>
       </Link>
       <Table>
@@ -84,7 +88,7 @@ const CourseTable = () => {
                 {course?.price || "NA"}
               </TableCell>
               <TableCell>
-                <Badge>
+                <Badge className="px-4 py-1 text-sm">
                   {course?.isPublished === true ? "Published" : "Draft"}
                 </Badge>
               </TableCell>
