@@ -264,7 +264,8 @@ export const editLecture = async (req, res) => {
     // now update this lecture in course table by ensuring the course has still lecture id if it was not already added
     const course = await Course.findById(courseId);
 
-    if (course && course.lectures.includes(lecture._id)) {
+    // if course has no updated lecture id then add it
+    if (course && !course.lectures.includes(lecture._id)) {
       course.lectures.push(lecture._id);
       await course.save();
     }
