@@ -8,6 +8,7 @@ import {
   getCourseById,
   getCourseLectures,
   getLectureById,
+  getPublishedCourses,
   togglePublishCourse,
   updateCourse,
 } from "../controllers/course.controller.js";
@@ -21,6 +22,11 @@ courseRouter.get(
   "/getCourses",
   isUserAuthenticated,
   getAllInstructorCreatedCourses
+);
+courseRouter.get(
+  "/published-courses",
+  isUserAuthenticated,
+  getPublishedCourses
 );
 courseRouter.get("/:courseId", isUserAuthenticated, getCourseById);
 courseRouter.put(

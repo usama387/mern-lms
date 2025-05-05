@@ -67,6 +67,30 @@ export const getAllInstructorCreatedCourses = async (req, res) => {
   }
 };
 
+// controller to get only published courses for students displayed on home page
+export const getPublishedCourses = async (_, res) => {
+  try {
+    const publishedCourses = await Course.find({ isPublished: true }).populate({
+      path: "creator",
+      select: "name profilePicUrl",
+    });
+    if (!publishedCourses) {
+      return res.status(404).json({
+        success: false,
+        message: "No published courses found",
+        courses: [],
+      });
+    }
+
+    return res.status(200).json({
+      courses: publishedCourses,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 // controller to update a course
 export const updateCourse = async (req, res) => {
   try {
@@ -167,7 +191,6 @@ export const getCourseById = async (req, res) => {
 };
 
 // controller to create a new course lecture
-
 export const createCourseLecture = async (req, res) => {
   try {
     const { lectureTitle } = req.body;
@@ -349,7 +372,7 @@ export const getLectureById = async (req, res) => {
   }
 };
 
-// controller to publish or unpublish a course
+// controller to publish or unpublish a course by admin
 export const togglePublishCourse = async (req, res) => {
   try {
     const { courseId } = req.params;
