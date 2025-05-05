@@ -1,11 +1,23 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import React from "react";
 import Course from "./Course";
+import { useGetPublishedCoursesQuery } from "@/features/api/courseApi";
 
 const Courses = () => {
-  const isLoading = false;
+  // Fetching published courses using a custom hook from the course API slice
+  const { data, isLoading, isError } = useGetPublishedCoursesQuery();
 
-  const courses = [1, 2, 3, 4, 5, 6, 7, 8];
+  if (isError) {
+    return (
+      <div className="bg-gray-50">
+        <div className="max-w-7xl mx-auto p-6">
+          <h2 className="font-bold mb-10 text-center text-3xl">
+            Error loading courses
+          </h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-50">
@@ -18,7 +30,10 @@ const Courses = () => {
             ? Array.from({ length: 8 }).map((_, index) => (
                 <CourseSkeleton key={index} />
               ))
-            : courses.map((course, index) => <Course key={index}/>)}
+            : data?.courses &&
+              data.courses.map((course, index) => (
+                <Course key={index} course={course} />
+              ))}
         </div>
       </div>
     </div>
